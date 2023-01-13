@@ -135,7 +135,7 @@ acme_standalone(){
         systemctl stop warp-go >/dev/null 2>&1
     fi
     
-    ipv4=$(curl -s4m8 api64.ipify.org -k)
+    ipv4=$(curl -s4m8 api.ipify.org -k)
     ipv6=$(curl -s6m8 api64.ipify.org -k)
     
     echo ""
@@ -348,7 +348,7 @@ menu() {
     echo -e "# ${GREEN}GitHub 项目${PLAIN}: https://github.com/blog-misaka               #"
     echo -e "# ${GREEN}GitLab 项目${PLAIN}: https://gitlab.com/misakablog                #"
     echo -e "# ${GREEN}Telegram 频道${PLAIN}: https://t.me/misakablogchannel             #"
-    echo -e "# ${GREEN}Telegram 群组${PLAIN}: https://t.me/+CLhpemKhaC8wZGIx             #"
+    echo -e "# ${GREEN}Telegram 群组${PLAIN}: https://t.me/misakanoxpz                   #"
     echo -e "# ${GREEN}YouTube 频道${PLAIN}: https://www.youtube.com/@misaka-blog        #"
     echo "#############################################################"
     echo ""
