@@ -248,9 +248,6 @@ checktls() {
             if [[ -n $(type -P wg-quick) && -n $(type -P wgcf) ]]; then
                 wg-quick up wgcf >/dev/null 2>&1
             fi
-            if [[ -n $(type -P wg-quick) && -n $(type -P wgcf) ]]; then
-                wg-quick up wgcf >/dev/null 2>&1
-            fi
             if [[ -a "/opt/warp-go/warp-go" ]]; then
                 systemctl start warp-go 
             fi
@@ -329,6 +326,7 @@ switch_provider(){
         3) bash ~/.acme.sh/acme.sh --set-default-ca --server zerossl && green "切换证书提供商为 ZeroSSL.com 成功！" ;;
         *) bash ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt && green "切换证书提供商为 Letsencrypt.org 成功！" ;;
     esac
+    
     back2menu
 }
 
