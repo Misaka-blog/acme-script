@@ -191,6 +191,9 @@ acme_standalone(){
     green "已输入的域名：$domain" && sleep 1
 
     domainIP=$(curl -sm8 ipget.net/?ip="${domain}")
+    if [[ -z $domainIP ]]; then
+        domainIP=$(echo "$(nslookup $domain 2>&1)" | awk '{print $NF}')
+    fi
     
     if [[ $domainIP == $ipv6 ]]; then
         bash ~/.acme.sh/acme.sh --issue -d ${domain} --standalone -k ec-256 --listen-v6 --insecure
