@@ -191,7 +191,7 @@ acme_standalone(){
     green "已输入的域名：$domain" && sleep 1
 
     domainIP=$(curl -sm8 ipget.net/?ip="${domain}")
-    if [[ -z $domainIP ]]; then
+    if [[ -z $domainIP || -n $(echo $domainIP | grep "nginx") ]]; then
         domainIP=$(echo "$(nslookup $domain 2>&1)" | awk '{print $NF}')
     fi
     
