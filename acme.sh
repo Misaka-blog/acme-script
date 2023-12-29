@@ -174,15 +174,15 @@ acme_standalone(){
     check_ip
     
     echo ""
-    yellow "在使用80端口申请模式时, 请先将您的域名解析至你的VPS的真实IP地址, 否则会导致证书申请失败"
+    yellow "在使用 80 端口申请模式时, 请先将您的域名解析至你的 VPS 的真实 IP 地址, 否则会导致证书申请失败"
     echo ""
     if [[ -n $ipv4 && -n $ipv6 ]]; then
-        echo -e "VPS的真实IPv4地址为: ${GREEN}$ipv4${PLAIN}"
-        echo -e "VPS的真实IPv6地址为: ${GREEN}$ipv6${PLAIN}"
+        echo -e "VPS 的真实 IPv4 地址为: ${GREEN}$ipv4${PLAIN}"
+        echo -e "VPS 的真实 IPv6 地址为: ${GREEN}$ipv6${PLAIN}"
     elif [[ -n $ipv4 && -z $ipv6 ]]; then
-        echo -e "VPS的真实IPv4地址为: ${GREEN}$ipv4${PLAIN}"
+        echo -e "VPS 的真实 IPv4 地址为: ${GREEN}$ipv4${PLAIN}"
     elif [[ -z $ipv4 && -n $ipv6 ]]; then
-        echo -e "VPS的真实IPv6地址为: ${GREEN}$ipv6${PLAIN}"
+        echo -e "VPS 的真实 IPv6 地址为: ${GREEN}$ipv6${PLAIN}"
     fi
     echo ""
 
@@ -190,7 +190,23 @@ acme_standalone(){
     [[ -z $domain ]] && red "未输入域名，无法执行操作！" && exit 1
     green "已输入的域名：$domain" && sleep 1
 
-    domainIP=$(echo "$(nslookup $domain 2>&1)" | awk '{print $NF}')
+    domainIP=$(dig @8.8.8.8 +time=2 +short "$domain" 2>/dev/null)
+    if echo $domainIP | grep -q "network unreachable\|timed out" || [[ -z $domainIP ]]; then
+        domainIP=$(dig @2001:4860:4860::8888 +time=2 aaaa +short "$domain" 2>/dev/null)
+    fi
+    if echo $domainIP | grep -q "network unreachable\|timed out" || [[ -z $domainIP ]] ; then
+        red "未解析出 IP，请检查域名是否输入有误" 
+        yellow "是否尝试强行匹配？"
+        green "1. 是，将使用强行匹配"
+        green "2. 否，退出脚本"
+        read -p "请输入选项 [1-2]：" ipChoice
+        if [[ $ipChoice == 1 ]]; then
+            yellow "将尝试强行匹配以申请域名证书"
+        else
+            red "将退出脚本"
+            exit 1
+        fi
+    fi
     
     if [[ $domainIP == $ipv6 ]]; then
         bash ~/.acme.sh/acme.sh --issue -d ${domain} --standalone -k ec-256 --listen-v6 --insecure
